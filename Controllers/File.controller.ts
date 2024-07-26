@@ -40,7 +40,7 @@ export class FileController {
                         const header = this.array[0];
                         this.array = this.array.filter((row) =>
                             row.some(cell =>
-                                cell.toLowerCase().includes(String(this.searchInput.value.toLowerCase()))
+                                this.removeAccents(cell.toLowerCase()).includes(this.removeAccents(String(this.searchInput.value.toLowerCase())))
                             )
                         );
                         this.array = [header, ...this.array];
@@ -87,5 +87,11 @@ export class FileController {
         table.append(thead, tbody);
 
         return table;
+    }
+
+    removeAccents(str: string): string {
+        return str
+            .normalize('NFD') 
+            .replace(/[\u0300-\u036f]/g, ''); 
     }
 }
