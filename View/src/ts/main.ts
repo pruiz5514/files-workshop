@@ -6,6 +6,7 @@ const input = document.querySelector("#file-input") as HTMLInputElement;
 const tableContainer = document.querySelector(".table-container") as HTMLElement;
 const nextButton = document.querySelector("#next-button") as HTMLButtonElement;
 const backButton = document.querySelector("#back-button") as HTMLButtonElement;
+const searchInput = document.querySelector("#search-input") as HTMLInputElement;
 
 
 const pagination = 15
@@ -13,7 +14,7 @@ let initialElement = 1;
 let finalElement = pagination;
 
 
-let fileController = new FileController(input, tableContainer, initialElement, finalElement);
+let fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput);
 
 async function updateData() {
     await fileController.getData();
@@ -34,14 +35,24 @@ async function updateData() {
 
 form.addEventListener("submit", async (event: Event) => {
     event.preventDefault();
-    fileController = new FileController(input, tableContainer, initialElement, finalElement);
-    await updateData()
+    fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput);
+    await updateData();
+    searchInput.style.display = "inline";
 })
+
+
+searchInput.addEventListener("input", async () => {
+    tableContainer.innerHTML = "";
+
+    fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput);
+    await updateData();
+})
+
 
 nextButton.addEventListener("click", async () => {
     initialElement += pagination;
     finalElement += pagination;
-    fileController = new FileController(input, tableContainer, initialElement, finalElement);
+    fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput);
     await updateData();
 });
 
@@ -49,7 +60,7 @@ backButton.addEventListener("click", async () => {
     if (initialElement > pagination) {
         initialElement -= pagination;
         finalElement -= pagination;
-        fileController = new FileController(input, tableContainer, initialElement, finalElement);
+        fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput);
         await updateData();
     }
 })
