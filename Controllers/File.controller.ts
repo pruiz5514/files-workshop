@@ -3,10 +3,14 @@ import { dataFile } from '../Models/DataFile'
 export class FileController {
     input: HTMLInputElement;
     tableContainer: HTMLElement;
+    initialElement: number;
+    finalElement: number;
 
-    constructor(input: HTMLInputElement, tableContainer: HTMLElement) {
+    constructor(input: HTMLInputElement, tableContainer: HTMLElement, initialElement: number, finalElement: number) {
         this.input = input,
             this.tableContainer = tableContainer;
+        this.initialElement = initialElement;
+        this.finalElement = finalElement;
     }
 
     getData(): void {
@@ -42,7 +46,7 @@ export class FileController {
 
         const tbody = document.createElement("tbody") as HTMLTableSectionElement;
         array.forEach((row, index) => {
-            if (index !== 0) {
+            if (index !== 0 && index > this.initialElement && index <= this.finalElement) {
                 let tr = document.createElement("tr") as HTMLTableCaptionElement;
 
                 row.forEach(cell => {
@@ -60,4 +64,6 @@ export class FileController {
 
         return table;
     }
+
+
 }
