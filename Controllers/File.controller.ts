@@ -73,9 +73,4 @@ export class FileController {
 
         return table;
     }
-
-    async getArrayLength() {
-        return await this.array?.length;
-    }
-
 }

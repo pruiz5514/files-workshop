@@ -1,1 +1,1 @@
-export type dataFile = string[][]
+export type dataFile = string[][];

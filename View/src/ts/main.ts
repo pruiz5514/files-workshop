@@ -6,6 +6,7 @@ const input = document.querySelector("#file-input") as HTMLInputElement;
 const tableContainer = document.querySelector(".table-container") as HTMLElement;
 const nextButton = document.querySelector("#next-button") as HTMLButtonElement;
 const backButton = document.querySelector("#back-button") as HTMLButtonElement;
+const searchInput = document.querySelector("#search-input") as HTMLInputElement;
 
 
 const pagination = 15
@@ -35,8 +36,16 @@ async function updateData() {
 form.addEventListener("submit", async (event: Event) => {
     event.preventDefault();
     fileController = new FileController(input, tableContainer, initialElement, finalElement);
-    await updateData()
+    await updateData();
+    searchInput.style.display = "inline";
 })
+
+
+searchInput.addEventListener("input", (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    console.log(target.value);
+})
+
 
 nextButton.addEventListener("click", async () => {
     initialElement += pagination;
