@@ -1,3 +1,5 @@
+import { dataFile } from '../Models/DataFile'
+
 export class FileController {
     input: HTMLInputElement;
     tableContainer: HTMLElement;
@@ -25,7 +27,7 @@ export class FileController {
             fileReader.readAsText(file)
         }
     }
-    createTable(array: string[][]) {
+    createTable(array: dataFile) {
         const table = document.createElement("table") as HTMLTableElement;
         table.className = "table";
         const thead = document.createElement("thead") as HTMLTableCaptionElement;
