@@ -14,7 +14,7 @@ let initialElement = 1;
 let finalElement = pagination;
 
 
-let fileController = new FileController(input, tableContainer, initialElement, finalElement);
+let fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput);
 
 async function updateData() {
     await fileController.getData();
@@ -35,22 +35,24 @@ async function updateData() {
 
 form.addEventListener("submit", async (event: Event) => {
     event.preventDefault();
-    fileController = new FileController(input, tableContainer, initialElement, finalElement);
+    fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput);
     await updateData();
     searchInput.style.display = "inline";
 })
 
 
-searchInput.addEventListener("input", (event: Event) => {
-    const target = event.target as HTMLInputElement;
-    console.log(target.value);
+searchInput.addEventListener("input", async () => {
+    tableContainer.innerHTML = "";
+
+    fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput);
+    await updateData();
 })
 
 
 nextButton.addEventListener("click", async () => {
     initialElement += pagination;
     finalElement += pagination;
-    fileController = new FileController(input, tableContainer, initialElement, finalElement);
+    fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput);
     await updateData();
 });
 
@@ -58,7 +60,7 @@ backButton.addEventListener("click", async () => {
     if (initialElement > pagination) {
         initialElement -= pagination;
         finalElement -= pagination;
-        fileController = new FileController(input, tableContainer, initialElement, finalElement);
+        fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput);
         await updateData();
     }
 })

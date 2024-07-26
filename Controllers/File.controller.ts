@@ -6,15 +6,16 @@ export class FileController {
     initialElement: number;
     finalElement: number;
     array: dataFile | null;
+    searchInput: HTMLInputElement;
 
 
-    constructor(input: HTMLInputElement, tableContainer: HTMLElement, initialElement: number, finalElement: number) {
+    constructor(input: HTMLInputElement, tableContainer: HTMLElement, initialElement: number, finalElement: number, searchInput: HTMLInputElement) {
         this.input = input;
         this.tableContainer = tableContainer;
         this.initialElement = initialElement;
         this.finalElement = finalElement;
         this.array = null;
-
+        this.searchInput = searchInput
     }
 
     getData(): Promise<void> {
@@ -28,10 +29,24 @@ export class FileController {
 
                     const rows = text?.split("\n");
                     this.array = rows.map(row => row.split(","));
-                    console.log(this.array.length);
 
-                    this.tableContainer.innerHTML = "";
-                    this.tableContainer.append(this.createTable(this.array));
+                    console.log(this.searchInput.value);
+
+                    if (this.searchInput.value === "") {
+                        this.tableContainer.innerHTML = "";
+                        this.tableContainer.append(this.createTable(this.array));
+                    }
+                    else {
+                        const header = this.array[0];
+                        this.array = this.array.filter((row) =>
+                            row.some(cell =>
+                                cell.toLowerCase().includes(String(this.searchInput.value.toLowerCase()))
+                            )
+                        );
+                        this.array = [header, ...this.array];
+                        this.tableContainer.innerHTML = "";
+                        this.tableContainer.append(this.createTable(this.array));
+                    }
 
                     resolve();
                 };
