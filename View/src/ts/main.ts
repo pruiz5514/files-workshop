@@ -9,9 +9,9 @@ const backButton = document.querySelector("#back-button") as HTMLButtonElement;
 const searchInput = document.querySelector("#search-input") as HTMLInputElement;
 
 
-const pagination = 15
-let initialElement = 1;
-let finalElement = pagination;
+const pagination: number = 15;
+let initialElement: number = 1;
+let finalElement: number = pagination;
 
 
 let fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput);
@@ -41,12 +41,14 @@ form.addEventListener("submit", async (event: Event) => {
 })
 
 
-searchInput.addEventListener("input", async () => {
-    tableContainer.innerHTML = "";
 
+searchInput.addEventListener("input", () => {
+    tableContainer.innerHTML = "";
     fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput);
-    await updateData();
-})
+    setTimeout(() => {
+        updateData();
+    }, 500);
+});
 
 
 nextButton.addEventListener("click", async () => {
