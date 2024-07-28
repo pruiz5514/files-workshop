@@ -21,51 +21,57 @@ export class FileController {
     getData(): Promise<void> {
         return new Promise((resolve) => {
             if (this.input.files && this.input.files.length === 1) {
-                let spacesArray = [];
+                let emptyCells = [];
                 const file = this.input.files[0];
-                const fileReader = new FileReader();
+                const fileExtension = file.name.split('.').pop()?.toLowerCase();
 
-                fileReader.onload = (event) => {
-                    const text = event.target?.result as string;
+                if (fileExtension === "csv") {
+                    const fileReader = new FileReader();
 
-                    const rows = text?.split("\n");
-                    this.array = rows.map(row => row.split(","));
-                    this.array.pop();
+                    fileReader.onload = (event) => {
+                        const text = event.target?.result as string;
 
-                    for (const row of this.array) {
-                        for (const cell of row) {
-                            if (cell.trim() === "") {
-                                spacesArray.push(cell);
+                        const rows = text?.split("\n");
+                        this.array = rows.map(row => row.split(","));
+                        this.array.pop();
+
+                        for (const row of this.array) {
+                            for (const cell of row) {
+                                if (cell.trim() === "") {
+                                    emptyCells.push(cell);
+                                }
                             }
                         }
-                    }
 
-                    if (spacesArray.length === 0) {
-                        if (this.searchInput.value === "") {
-                            this.tableContainer.innerHTML = "";
-                            this.tableContainer.append(this.createTable(this.array));
+                        if (emptyCells.length === 0) {
+                            if (this.searchInput.value === "") {
+                                this.tableContainer.innerHTML = "";
+                                this.tableContainer.append(this.createTable(this.array));
+                            }
+                            else {
+                                const header = this.array[0];
+                                this.array = this.array.filter((row) =>
+                                    row.some(cell =>
+                                        this.removeAccents(cell.toLowerCase()).includes(this.removeAccents(String(this.searchInput.value.toLowerCase())))
+                                    )
+                                );
+                                this.array = [header, ...this.array];
+                                this.tableContainer.innerHTML = "";
+                                this.tableContainer.append(this.createTable(this.array));
+                            }
                         }
                         else {
-                            const header = this.array[0];
-                            this.array = this.array.filter((row) =>
-                                row.some(cell =>
-                                    this.removeAccents(cell.toLowerCase()).includes(this.removeAccents(String(this.searchInput.value.toLowerCase())))
-                                )
-                            );
-                            this.array = [header, ...this.array];
-                            this.tableContainer.innerHTML = "";
-                            this.tableContainer.append(this.createTable(this.array));
+                            alert("El archivo no cumple con el formato correcto")
+                            window.location.href = "/"
                         }
-                    }
-                    else {
-                        alert("El archivo no cumple con el formato correcto")
-                        window.location.href = "/"
-                    }
 
-                    resolve();
-                };
-
-                fileReader.readAsText(file);
+                        resolve();
+                    };
+                    fileReader.readAsText(file);
+                } else {
+                    alert("Solo se reciben documentos .csv");
+                    window.location.href = '/';
+                }
             }
         });
     }
