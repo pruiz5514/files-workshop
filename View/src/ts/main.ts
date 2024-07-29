@@ -1,7 +1,6 @@
 import '../scss/style.scss';
 import { FileController } from '../../../Controllers/File.controller'
 
-
 const form = document.querySelector("form") as HTMLFormElement;
 const input = document.querySelector("#file-input") as HTMLInputElement;
 const tableContainer = document.querySelector(".table-container") as HTMLElement;
@@ -10,6 +9,7 @@ const backButton = document.querySelector("#back-button") as HTMLButtonElement;
 const searchInput = document.querySelector("#search-input") as HTMLInputElement;
 const chart = document.querySelector("#chart") as HTMLCanvasElement;
 const csvButton = document.querySelector("#csv-button") as HTMLButtonElement;
+const newFileButton = document.querySelector("#newFile-button") as HTMLButtonElement;
 
 const pagination: number = 15;
 let initialElement: number = 1;
@@ -40,8 +40,9 @@ form.addEventListener("submit", async (event: Event) => {
     await updateData();
     searchInput.style.display = "inline";
     csvButton.style.display = "block";
+    newFileButton.style.display = "block";
     fileController.postChart(chart);
-})
+});
 
 searchInput.addEventListener("input", () => {
     tableContainer.innerHTML = "";
@@ -71,4 +72,8 @@ csvButton.addEventListener("click", async () => {
     fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput, chart);
     await updateData();
     fileController.downloadFile();
+})
+
+newFileButton.addEventListener("click", () => {
+    window.location.href = "/";
 })
