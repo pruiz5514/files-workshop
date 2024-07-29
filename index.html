@@ -18,11 +18,17 @@
         <button type="submit">Enviar</button>
       </form>
 
-      <input type="text" placeholder="Filtrar por parametro" id="search-input" />
+      <input
+        type="text"
+        placeholder="Filtrar por parametro"
+        id="search-input"
+      />
       <section class="table-container"></section>
 
       <button id="back-button">Anterior</button>
       <button id="next-button">siguiente</button>
+
+      <canvas id="chart" width="400" height="300"></canvas>
     </main>
 
     <script
@@ -30,6 +36,7 @@
       integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
       crossorigin="anonymous"
     ></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="/View/src/ts/main.ts"></script>
   </body>
 </html>

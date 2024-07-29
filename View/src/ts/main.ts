@@ -1,12 +1,15 @@
 import '../scss/style.scss';
 import { FileController } from '../../../Controllers/File.controller'
 
+
 const form = document.querySelector("form") as HTMLFormElement;
 const input = document.querySelector("#file-input") as HTMLInputElement;
 const tableContainer = document.querySelector(".table-container") as HTMLElement;
 const nextButton = document.querySelector("#next-button") as HTMLButtonElement;
 const backButton = document.querySelector("#back-button") as HTMLButtonElement;
 const searchInput = document.querySelector("#search-input") as HTMLInputElement;
+const chart = document.querySelector("#chart") as HTMLCanvasElement;
+console.log(chart);
 
 
 const pagination: number = 15;
@@ -14,7 +17,7 @@ let initialElement: number = 1;
 let finalElement: number = pagination;
 
 
-let fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput);
+let fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput, chart);
 
 async function updateData() {
     await fileController.getData();
@@ -35,16 +38,17 @@ async function updateData() {
 
 form.addEventListener("submit", async (event: Event) => {
     event.preventDefault();
-    fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput);
+    fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput, chart);
     await updateData();
     searchInput.style.display = "inline";
+    fileController.postChart(chart);
 })
 
 
 
 searchInput.addEventListener("input", () => {
     tableContainer.innerHTML = "";
-    fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput);
+    fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput, chart);
     setTimeout(() => {
         updateData();
     }, 500);
@@ -54,7 +58,7 @@ searchInput.addEventListener("input", () => {
 nextButton.addEventListener("click", async () => {
     initialElement += pagination;
     finalElement += pagination;
-    fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput);
+    fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput, chart);
     await updateData();
 });
 
@@ -62,7 +66,7 @@ backButton.addEventListener("click", async () => {
     if (initialElement > pagination) {
         initialElement -= pagination;
         finalElement -= pagination;
-        fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput);
+        fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput, chart);
         await updateData();
     }
 })

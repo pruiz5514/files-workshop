@@ -1,4 +1,6 @@
+import Chart from 'chart.js/auto';
 import { dataFile } from '../Models/DataFile'
+
 
 export class FileController {
     input: HTMLInputElement;
@@ -7,15 +9,18 @@ export class FileController {
     finalElement: number;
     array: dataFile | null;
     searchInput: HTMLInputElement;
+    chart: HTMLCanvasElement;
+    initialData: dataFile | null;
 
-
-    constructor(input: HTMLInputElement, tableContainer: HTMLElement, initialElement: number, finalElement: number, searchInput: HTMLInputElement) {
+    constructor(input: HTMLInputElement, tableContainer: HTMLElement, initialElement: number, finalElement: number, searchInput: HTMLInputElement, chart: HTMLCanvasElement) {
         this.input = input;
         this.tableContainer = tableContainer;
         this.initialElement = initialElement;
         this.finalElement = finalElement;
         this.array = null;
-        this.searchInput = searchInput
+        this.searchInput = searchInput;
+        this.chart = chart;
+        this.initialData = null;
     }
 
     getData(): Promise<void> {
@@ -34,6 +39,8 @@ export class FileController {
                         const rows = text?.split("\n");
                         this.array = rows.map(row => row.split(","));
                         this.array.pop();
+
+                        this.initialData = [...this.array];
 
                         for (const row of this.array) {
                             for (const cell of row) {
@@ -113,5 +120,54 @@ export class FileController {
         return str
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '');
+    }
+
+    postChart(chart: HTMLCanvasElement) {
+        const canva = chart.getContext("2d");
+
+        let xAxis: string[] = []
+        console.log(this.initialData);
+
+        if (this.initialData) {
+            for (const row of this.initialData) {
+                if (!xAxis.includes(row[2])) {
+                    xAxis.push(row[2])
+                }
+            }
+        }
+
+        xAxis.shift();
+
+        let yAxis: number[] = [];
+        for (const dataX of xAxis) {
+            let counter = 0;
+            if (this.initialData) {
+                for (const dataY of this.initialData) {
+                    if (dataX === dataY[2]) {
+                        counter += 1;
+                    }
+                }
+            }
+            yAxis.push(counter);
+        }
+
+        console.log(yAxis);
+
+
+        if (canva) {
+            new Chart(canva, {
+                type: 'bar',
+                data: {
+                    labels: xAxis,
+                    datasets: [
+                        {
+                            label: `CANTIDAD DE ${this.initialData?.[0][4] ?? 'Dato1'} POR ${this.initialData?.[0][2] ?? 'Dato2'}`,
+                            backgroundColor: "#000080", // Color válido para el gráfico
+                            data: yAxis
+                        }
+                    ]
+                }
+            });
+        }
     }
 }
