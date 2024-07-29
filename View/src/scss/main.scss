@@ -3,22 +3,43 @@
 main{
     width: 90%;
     margin: 0 auto;
+    padding: 30px 0;
 
     h1{
         text-align: center;
+        margin-bottom: 30px;
     }
 
    #search-input{
-    display:  none;
+        display:  none;
    }
 
-    #back-button{
-        display: none;
-    }
+   .pages-buttons-container{
+        margin: 20px 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
 
-    #next-button{
+        #back-button{
+            display: none;
+        }
+
+        #next-button{
+            display: none;
+        }
+   }
+    
+   .button-container{
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 30px;
+
+       #newFile-button{
         display: none;
-    }
+       } 
+   }
 
     #csv-button{
         display: none;

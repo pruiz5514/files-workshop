@@ -1,7 +1,6 @@
 import Chart from 'chart.js/auto';
 import { dataFile } from '../Models/DataFile'
 
-
 export class FileController {
     input: HTMLInputElement;
     tableContainer: HTMLElement;
@@ -23,23 +22,30 @@ export class FileController {
         this.initialData = null;
     }
 
+    // Method that renders the table 
     getData(): Promise<void> {
         return new Promise((resolve) => {
+
+            // It is validated that only one file has been added.
             if (this.input.files && this.input.files.length === 1) {
                 let emptyCells = [];
                 const file = this.input.files[0];
                 const fileExtension = file.name.split('.').pop()?.toLowerCase();
 
+                // Validates that it is a .csv file.
                 if (fileExtension === "csv") {
                     const fileReader = new FileReader();
 
+                    // The information is obtained from the file
                     fileReader.onload = (event) => {
                         const text = event.target?.result as string;
 
+                        // All the information is stored in an array of arrays called array
                         const rows = text?.split("\n");
                         this.array = rows.map(row => row.split(","));
                         this.array.pop();
 
+                        // All the initial information is stored for later use in the graph.
                         this.initialData = [...this.array];
 
                         for (const row of this.array) {
@@ -50,6 +56,7 @@ export class FileController {
                             }
                         }
 
+                        // Validate that no cells are empty and perform the logic for data filtering. 
                         if (emptyCells.length === 0) {
                             if (this.searchInput.value === "") {
                                 this.tableContainer.innerHTML = "";
@@ -62,6 +69,8 @@ export class FileController {
                                         this.removeAccents(cell.toLowerCase()).includes(this.removeAccents(String(this.searchInput.value.toLowerCase())))
                                     )
                                 );
+
+                                // Table is rendered
                                 this.array = [header, ...this.array];
                                 this.tableContainer.innerHTML = "";
                                 this.tableContainer.append(this.createTable(this.array));
@@ -82,7 +91,10 @@ export class FileController {
             }
         });
     }
-    createTable(array: dataFile) {
+
+
+    // Method that creates the table
+    createTable(array: dataFile): HTMLTableElement {
         const table = document.createElement("table") as HTMLTableElement;
         table.className = "table";
         const thead = document.createElement("thead") as HTMLTableCaptionElement;
@@ -116,15 +128,18 @@ export class FileController {
         return table;
     }
 
+    // method that removes the tildes for data filtering 
     removeAccents(str: string): string {
         return str
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '');
     }
 
+    // Method that creates the chart, the chart.js library is implemented.
     postChart(chart: HTMLCanvasElement) {
         const canva = chart.getContext("2d");
 
+        // The array xAxis stores all the data of column 2 of all the information, (in this case the departments).
         let xAxis: string[] = []
 
         if (this.initialData) {
@@ -137,6 +152,7 @@ export class FileController {
 
         xAxis.shift();
 
+        // The array yAxis stores the number of times the data of the array xAxis is repeated, (in this case it counts the municipalities by departments).
         let yAxis: number[] = [];
         for (const dataX of xAxis) {
             let counter = 0;
@@ -150,6 +166,7 @@ export class FileController {
             yAxis.push(counter);
         }
 
+        // The chart is created
         if (canva) {
             new Chart(canva, {
                 type: 'bar',
@@ -158,7 +175,7 @@ export class FileController {
                     datasets: [
                         {
                             label: `CANTIDAD DE ${this.initialData?.[0][4] ?? 'Dato1'} POR ${this.initialData?.[0][2] ?? 'Dato2'}`,
-                            backgroundColor: "#000080", // Color válido para el gráfico
+                            backgroundColor: "#000080",
                             data: yAxis
                         }
                     ]
@@ -167,18 +184,25 @@ export class FileController {
         }
     }
 
+    //  Method to download the .csv file
     downloadFile() {
+
+        //The array of arrays with all the information is converted into text separated by line breaks and commas. 
         const dataCsv: string = this.array?.map((row: string[]) => row.join(",")).join("\n") ?? "";
 
         const blob: Blob = new Blob([dataCsv], { type: "text/csv" });
 
         const url = URL.createObjectURL(blob);
+
+        // An anchor is created to store the link with which the file is downloaded. 
         const link = document.createElement("a");
         link.href = url;
         link.download = "datos.csv";
 
         document.body.appendChild(link);
         link.click();
+
+        // The anchor is removed once the file has been downloaded.
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
     }
