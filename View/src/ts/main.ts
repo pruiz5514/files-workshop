@@ -11,13 +11,16 @@ const chart = document.querySelector("#chart") as HTMLCanvasElement;
 const csvButton = document.querySelector("#csv-button") as HTMLButtonElement;
 const newFileButton = document.querySelector("#newFile-button") as HTMLButtonElement;
 
+// the "pagination" constant refers to the maximum number of elements shown in the table. initialElement and finalElement are the variables that will be incremented at the time of pagination to display the new objects. 
 const pagination: number = 15;
 let initialElement: number = 1;
 let finalElement: number = pagination;
 
+// An instance of the FileController class is created, which contains all the methods used in the program.
 let fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput, chart);
 
-async function updateData() {
+// This function calls the getData() method which renders the table with all the information. Additionally, a series of conditionals are set, where the amount of data and the maximum page size are taken into account in order to display the next and previous buttons.
+async function updateData(): Promise<void> {
     await fileController.getData();
     const arrayLength = fileController.array?.length ?? 0;
 
@@ -34,6 +37,7 @@ async function updateData() {
     }
 }
 
+// When the .csv file is sent, the updateData function is called to render the table and buttons, additionally the postChart(chart) method is called to render the chart.
 form.addEventListener("submit", async (event: Event) => {
     event.preventDefault();
     fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput, chart);
@@ -44,6 +48,7 @@ form.addEventListener("submit", async (event: Event) => {
     fileController.postChart(chart);
 });
 
+// Search input that filters the information in the table, the function is executed after 500 ms.
 searchInput.addEventListener("input", () => {
     tableContainer.innerHTML = "";
     fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput, chart);
@@ -52,6 +57,7 @@ searchInput.addEventListener("input", () => {
     }, 500);
 });
 
+// Next button for the pagination, this increase initialElement and finalElement variables and render the table.
 nextButton.addEventListener("click", async () => {
     initialElement += pagination;
     finalElement += pagination;
@@ -59,6 +65,7 @@ nextButton.addEventListener("click", async () => {
     await updateData();
 });
 
+// Back button for the pagination, this decrease initialElement and finalElement variables and render the table.
 backButton.addEventListener("click", async () => {
     if (initialElement > pagination) {
         initialElement -= pagination;
@@ -68,12 +75,14 @@ backButton.addEventListener("click", async () => {
     }
 })
 
+// Button that calls the downloadFile method to download the .csv file with the filtered data.
 csvButton.addEventListener("click", async () => {
     fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput, chart);
-    await updateData();
+    await fileController.getData();
     fileController.downloadFile();
 })
 
+// Button that restarts the program 
 newFileButton.addEventListener("click", () => {
     window.location.href = "/";
 })
