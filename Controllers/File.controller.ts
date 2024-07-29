@@ -126,7 +126,6 @@ export class FileController {
         const canva = chart.getContext("2d");
 
         let xAxis: string[] = []
-        console.log(this.initialData);
 
         if (this.initialData) {
             for (const row of this.initialData) {
@@ -151,9 +150,6 @@ export class FileController {
             yAxis.push(counter);
         }
 
-        console.log(yAxis);
-
-
         if (canva) {
             new Chart(canva, {
                 type: 'bar',
@@ -169,5 +165,21 @@ export class FileController {
                 }
             });
         }
+    }
+
+    downloadFile() {
+        const dataCsv: string = this.array?.map((row: string[]) => row.join(",")).join("\n") ?? "";
+
+        const blob: Blob = new Blob([dataCsv], { type: "text/csv" });
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "datos.csv";
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
     }
 }
