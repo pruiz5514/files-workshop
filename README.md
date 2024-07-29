@@ -16,5 +16,13 @@ Libreria para las graficas:
 
 npm install chart.js
 
+Intalacion de bootstrap:
+
+npm i --save bootstrap @popperjs/core
+
+Instalacion de sass:
+
+npm i --save-dev sass
+
 Para ejecutar el proyecto utilice el siguiente comando:
 npm run dev
