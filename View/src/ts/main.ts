@@ -46,6 +46,7 @@ form.addEventListener("submit", async (event: Event) => {
     csvButton.style.display = "block";
     newFileButton.style.display = "block";
     fileController.postChart(chart);
+
 });
 
 // Search input that filters the information in the table, the function is executed after 500 ms.
@@ -77,8 +78,6 @@ backButton.addEventListener("click", async () => {
 
 // Button that calls the downloadFile method to download the .csv file with the filtered data.
 csvButton.addEventListener("click", async () => {
-    fileController = new FileController(input, tableContainer, initialElement, finalElement, searchInput, chart);
-    await fileController.getData();
     fileController.downloadFile();
 })
 
@@ -86,3 +85,4 @@ csvButton.addEventListener("click", async () => {
 newFileButton.addEventListener("click", () => {
     window.location.href = "/";
 })
+

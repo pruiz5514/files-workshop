@@ -10,6 +10,8 @@ export class FileController {
     searchInput: HTMLInputElement;
     chart: HTMLCanvasElement;
     initialData: dataFile | null;
+    buttonAscend: HTMLButtonElement | undefined;
+    buttonDesc: HTMLButtonElement | undefined;
 
     constructor(input: HTMLInputElement, tableContainer: HTMLElement, initialElement: number, finalElement: number, searchInput: HTMLInputElement, chart: HTMLCanvasElement) {
         this.input = input;
@@ -20,6 +22,8 @@ export class FileController {
         this.searchInput = searchInput;
         this.chart = chart;
         this.initialData = null;
+        this.buttonAscend = undefined;
+        this.buttonDesc = undefined;
     }
 
     // Method that renders the table 
@@ -100,10 +104,24 @@ export class FileController {
         const thead = document.createElement("thead") as HTMLTableCaptionElement;
         const trHeader = document.createElement("tr") as HTMLTableCaptionElement;
 
-        array[0].forEach(cell => {
+        array[0].forEach((cell, index) => {
+            this.buttonAscend = document.createElement("button") as HTMLButtonElement;
+            this.buttonDesc = document.createElement("button") as HTMLButtonElement;
+
+            this.buttonAscend.innerText = "as";
+            this.buttonDesc.innerText = "des";
+            this.buttonAscend.id = `as${index}`;
+            this.buttonDesc.id = `des${index}`;
+            this.buttonAscend.className = "btn btn-primary mx-2";
+            this.buttonDesc.className = "btn btn-primary";
+
+            this.buttonAscend.addEventListener('click', (event) => this.sortTable(event, 'asc'));
+            this.buttonDesc.addEventListener('click', (event) => this.sortTable(event, 'desc'));
+
             let th = document.createElement("th") as HTMLTableCaptionElement;
             th.setAttribute("scope", "col");
             th.innerText = cell;
+            th.append(document.createElement("br"), this.buttonDesc, this.buttonAscend);
             trHeader.append(th);
         });
 
@@ -184,6 +202,31 @@ export class FileController {
         }
     }
 
+    sortTable(event: Event, direction: 'asc' | 'desc') {
+        const target = event.currentTarget as HTMLButtonElement;
+        const columnIndex = parseInt(target.id.replace(/\D/g, ''));
+
+        if (this.array && this.array.length > 1) {
+            const header = this.array[0];
+            this.array = this.array.slice(1);
+
+            this.array.sort((a, b) => {
+                const valueA = a[columnIndex].toLowerCase();
+                const valueB = b[columnIndex].toLowerCase();
+
+                if (direction === 'asc') {
+                    return valueA.localeCompare(valueB);
+                } else {
+                    return valueB.localeCompare(valueA);
+                }
+            });
+
+            this.array = [header, ...this.array];
+            this.tableContainer.innerHTML = "";
+            this.tableContainer.append(this.createTable(this.array));
+        }
+    }
+
     //  Method to download the .csv file
     downloadFile() {
 
@@ -206,4 +249,7 @@ export class FileController {
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
     }
+
+
+
 }
